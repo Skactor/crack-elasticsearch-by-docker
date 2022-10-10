@@ -14,10 +14,8 @@ curl -o LicenseVerifier.java -s https://raw.githubusercontent.com/elastic/elasti
 curl -o XPackBuild.java -s https://raw.githubusercontent.com/elastic/elasticsearch/$branch/x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/XPackBuild.java
 
 # Edit LicenseVerifier.java
-sed -i '/.*PublicKey PUBLIC_KEY.*/i END\nCODE' LicenseVerifier.java
-sed -i '/.*signedContent = null.*/i BEG' LicenseVerifier.java
-sed -i '/BEG/,/END/d' LicenseVerifier.java
-sed -i 's/CODE/            return true;\n    }\n/g' LicenseVerifier.java
+python -c "import re;a=re.sub(r'byte\[\] signedContent.+?\}\s+\}','return true;',open('LicenseVerifier.java').read(),flags=re.S);open('LicenseVerifier.java','w').write(a)"
+python -c "import re;a=re.sub(r'final byte\[\] publicKeyBytes;.+?return verifyLicense\(license, publicKeyBytes\);','return true;',open('LicenseVerifier.java').read(),flags=re.S);open('LicenseVerifier.java','w').write(a)"
 
 # Edit XPackBuild.java
 sed -i 's/path.toString().endsWith(".jar")/false/g' XPackBuild.java
